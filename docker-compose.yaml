@@ -1,0 +1,53 @@
+version: '3'
+
+services:
+  laravel:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: laravel-api
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./backend/projeto:/var/www/html
+    command: ["tail", "-f", "/dev/null"]
+    networks:
+      desafio_network:
+        ipv4_address: 172.16.0.2
+  
+  vue:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: vue-app
+    working_dir: /app
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./frontend/projeto:/app
+    # command: ["npm", "run", "dev"]
+    command: ["tail", "-f", "/dev/null"]
+    networks:
+      desafio_network:
+        ipv4_address: 172.16.0.3
+
+  postgres:
+    build:
+      context: ./banco
+      dockerfile: Dockerfile
+    container_name: banco-postgres
+    ports:
+      - "5432:5432"
+    networks:
+      desafio_network:
+        ipv4_address: 172.16.0.4
+
+
+networks:
+  desafio_network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.0.0/24
+
