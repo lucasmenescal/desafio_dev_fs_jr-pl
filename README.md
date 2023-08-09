@@ -26,9 +26,10 @@ Certifique-se de criar uma pasta chamada projeto dentro das pastas backend e fro
 cd frontend
 mkdir projeto
 git clone https://github.com/seu-usuario/frontend-vue.git projeto
+
 cd ../backend
 mkdir projeto
-git clone https://github.com/seu-usuario/backend-laravel.git projeto
+git clone https://github.com/lucasmenescal/cepinfo.git projeto
 ```
 
 ## Uso
