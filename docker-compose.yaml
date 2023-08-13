@@ -6,11 +6,21 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     container_name: laravel-api
+    working_dir: /var/www/html
+    depends_on:
+      - postgres
     ports:
-      - "9000:9000"
+      - "8000:8000"
     volumes:
-      - ./backend/projeto:/var/www/html
-    command: ["tail", "-f", "/dev/null"]
+      - ./backend/projeto/cepinfo:/var/www/html
+    command:
+      # Ao iniciar o container vai verificar se o container do banco ja está funcionando e caso sim, faz o migrate e inicia o server laravel.
+      - sh
+      - -c
+      - |
+        dockerize -wait tcp://172.16.0.4:5432
+        php artisan migrate
+        php artisan serve --host=0.0.0.0 --port=8000
     networks:
       desafio_network:
         ipv4_address: 172.16.0.2
@@ -20,13 +30,14 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     container_name: vue-app
-    working_dir: /app
+    working_dir: /app/cepinfo-app/cepinfo-app
+    depends_on:
+      - postgres
     ports:
       - "8080:8080"
     volumes:
       - ./frontend/projeto:/app
-    # command: ["npm", "run", "dev"]
-    command: ["tail", "-f", "/dev/null"]
+    command: ["npm", "run", "serve"]
     networks:
       desafio_network:
         ipv4_address: 172.16.0.3
@@ -45,6 +56,7 @@ services:
 
 networks:
   desafio_network:
+    external: true
     driver: bridge
     ipam:
       driver: default

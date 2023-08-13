@@ -14,12 +14,17 @@ RUN apk add --no-cache \
     icu-dev \
     oniguruma-dev \
     unzip \
-    libpq-dev
+    libpq-dev \
+    wget
 
 RUN docker-php-ext-install pdo_pgsql pgsql
 
 # Instale o Composer globalmente
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+RUN wget https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize-linux-amd64-v0.6.1.tar.gz \
+    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-v0.6.1.tar.gz \
+    && rm dockerize-linux-amd64-v0.6.1.tar.gz
 
 # Defina o diretório de trabalho dentro do contêiner
 WORKDIR /var/www/html
